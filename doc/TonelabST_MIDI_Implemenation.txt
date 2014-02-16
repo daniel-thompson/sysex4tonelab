@@ -1,0 +1,196 @@
+Vox ToneLab ST MIDI Implementation
+==================================
+
+System exclusive messages
+-------------------------
+
+The unit can issue the following SysEx messages:
+
+1. Device enqiry reply (universal)
+2. Korg SysEx messages.
+
+The unit can receive:
+
+1. Device enqiry request (universal)
+2. Korg SysEx messages.
+
+Device enquiry
+--------------
+
+  <<< F0 7E 7F 06 01 F7
+  >>> F0 7E 00 06 02 42 08 01 00 00 00 00 01 00 F7
+
+Korg SysEx messages
+-------------------
+
+All Korg SysEx messages understood by the unit have the following
+form:
+
+.Message structure
+[cols="m,", width="90%"]
+|=========================================
+| F0 | Start exclusive mesasage
+| 42 | Unit ID (byte 0) - Korg
+| 30 | MIDI channel 0 (always fixed for USB MIDI?)
+| 00 | Unit ID? (byte 1)
+| 01 | Unit ID? (byte 2)
+| 08 | Unit ID? (byte 3)
+| xx | Opcode
+| .. | Data (length determined by opcode)
+| F7 | End exclusive message
+|=========================================
+
+The opcodes can be any of the following values:
+
+.Opcode descriptions
+[cols="m,,,", width="90%", options="header"]
+|=========================================
+| Opcode | TX | RX | Descriptiion
+| 12 | ? | ? | Mode request
+| 10 | ? | ? | Current program parameter dump request
+| 1C | ? | ? | Program parameter dump request
+| 0E | ? | ? | Global data dump request
+| 0F | ? | ? | All data dump request
+| 11 | ? | ? | Program write request
+| 40 | ? | ? | Current program parameter dump
+| 4C | ? | ? | Program parameter dump
+| 51 | ? | ? | Global data dump
+| 50 | ? | ? | All data dump
+| 4E | ? | ? | Mode change
+| 41 | ? | ? | Parameter change
+| 42 | ? | ? | Mode data
+| 26 | ? | ? | Data format error
+| 23 | ? | ? | Data load completed
+| 24 | ? | ? | Data load error
+| 21 | ? | ? | Write completed
+| 22 | ? | ? | Write error
+|=========================================
+
+Current program parameter dump request (0x10)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  F0 42 30 00 01 08 10 F7
+                   ^^^^
+
+.Format
+|=========================================
+| 10 | Opcode
+|=========================================
+
+Program parameter dump request (0x1C)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  F0 42 30 00 01 08 1C 20 03 F7
+                    ^^^^^^^^
+
+.Format
+|=========================================
+| 1C | Opcode
+| 20 | Kind? (bit 6 must be set or unit reports error
+| xx | Program number
+|=========================================
+
+Mode change (0x4E)
+~~~~~~~~~~~~~~~~~~
+
+  F0 42 30 00 01 08 4E 00 04 F7
+                    ^^^^^^^^
+
+.Format
+|=========================================
+| 4E | Opcode
+| 00 | Mode and option? (bits 6, 5 and 4)
+| xx | Program number
+|=========================================
+
+Korg data structures
+--------------------
+
+Program parameters
+~~~~~~~~~~~~~~~~~~
+
+Amp model:
+
+|=========================================
+| 00 | Standard Clean
+| 01 | Standard Cali Clean
+| 02 | Standard US Blues
+| 03 | Standard US 2x12
+| 04 | Standard Vox AC15
+| 05 | Standard Vox AC30
+| 06 | Standard UK Rock
+| 07 | Standard UK Metal
+| 08 | Standard US Higain
+| 09 | Standard US Metal
+| 0A | Standard Btq Metal
+| 0B | Special Clean
+| 0C | Special Cali Clean
+| 0D | Special US Blues
+| 0E | Special US 2x12
+| 0F | Special Vox AC15
+| 10 | Special Vox AC30
+| 11 | Special UK Rock
+| 12 | Special UK Metal
+| 13 | Special US Higain
+| 14 | Special US Metal
+| 15 | Special Btq Metal
+| 16 | Custom Clean
+| 17 | Custom Cali Clean
+| 18 | Custom US Blues
+| 19 | Custom US 2x12
+| 1A | Custom Vox AC15
+| 1B | Custom Vox AC30
+| 1C | Custom UK Rock
+| 1D | Custom UK Metal
+| 1E | Custom US Higain
+| 1F | Custom US Metal
+| 20 | Custom Btq Metal
+|=========================================
+
+Pedal mode:
+
+|=========================================
+| 00 | Comp
+| 01 | Acoustic
+| 02 | Vox Wah
+| 03 | U-vibe
+| 04 | Octave
+| 05 | Treble boost
+| 06 | Tube Overdrive
+| 07 | Boutique
+| 08 | Orange dist
+| 09 | Metal dist
+| 0A | Fuzz
+|=========================================
+
+Mod/delay mode:
+
+|=========================================
+| 00 | Classic chorus
+| 01 | Multi tap chorus
+| 02 | Classic Flanger
+| 03 | Phaser
+| 04 | Textrem
+| 05 | Rotary
+| 06 | Pitch shifter
+| 07 | Filton
+| 08 | Echo plus
+| 09 | Delay
+| 0A | Chorus + delay
+|=========================================
+
+Expression pedal assign:
+
+|=========================================
+| 00 | Not assigned
+| 01 | Volume
+| 08 | Gain
+| 10 | Input level for reverb
+| 0C | Input level for mod/delay
+| 04 | Pedal param
+| 0C | Mod/delay param 1 (may not be param 1 - may be input level)
+| 0D | Mod/delay param 2
+| 0E | Mod/delay tap param
+|=========================================
+
+
