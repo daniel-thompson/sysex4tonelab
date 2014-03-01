@@ -1,0 +1,4 @@
+#!/usr/bin/env hbcxx
+#! -DPACKAGE_NAME='"sysex4tonelab"'
+#! source: src/main.cpp
+#! requires: alsa 

@@ -1,0 +1,19 @@
+sysex4tonelab
+=============
+
+WARNING: sysex4tonelab is a work-in-progress and is not (yet) 
+         sufficiently finished to do anything useful.
+
+sysex4tonelab is a third party librarian for Vox's Tonelab ST
+multi-effects pedal.
+
+Installation
+------------
+
+During the development phase this program uses hbcxx
+(http://hbcxx.sf.net) as its build system. Once hbcxx has been
+installed there is no need to install the application, just run:
+  ./sysex4tonelab
+
+However if you would like to build an ELF executable then try:
+  hbcxx --hbcxx-executable=src/sysex4tonelab sysex4tonelab
